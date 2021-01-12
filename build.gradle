@@ -14,15 +14,9 @@ ext.runningInJenkins=0
 
 // if we have the semantic versions values set then use those
 
-if (hasProperty('MAJOR_VERSION') && hasProperty('MINOR_VERSION') && hasProperty('PATCH_VERSION') && hasProperty('BUILD_STAGE'))
-	{    setVersion = MAJOR_VERSION + '.' + MINOR_VERSION + '.' + PATCH_VERSION + '-' + BUILD_STAGE }
+if (hasProperty('STAGE_VERSION')) setVersion = STAGE_VERSION + '-STAGE'
+if (hasProperty('RC_VERSION')) setVersion = RC_VERSION + '-RELCANDIDATE'
 
-// otherwise if have the SOURCE_BUILD_NUMBER set (as would be in Jenkins) then use that (and assume that we are running in Jenkins)
-
-else if (System.env.SOURCE_BUILD_NUMBER != null) 
-	{    setVersion = '0.0.' + System.env.SOURCE_BUILD_NUMBER + '-SNAPSHOT'
-	     runningInJenkins = 1
-        }
 
 
 // applies to all subprojects
