@@ -1,39 +1,69 @@
 package com.demo.dao;
 
 import java.sql.Connection;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.io.File;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 
 
 import javax.sql.*;
 
-
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
 
 public class MyDataSource {
 	
+
+	
 	private static MysqlDataSource mysqlDS = null;
+
 
 		
     public static DataSource getMySQLDataSource() throws Exception {
-    	Properties props = new Properties();
-        InputStream is = null;
-        
+    	
+    	Logger logger = Logger.getLogger(MyDataSource.class.getName() );		
+              
         if (mysqlDS != null) {
 			return mysqlDS;	
 		}
     
-             
+        String strMySQLHost = "";
+        String strMySQLPort = "";
+        String strMySQLDatabase = "";
+          
         try {
-        	is = new URL("http://localhost:8080/static/db.properties").openStream();
-            props.load(is);
+        	
+           // TO-DO Change to load from a general properties file - once we figure out where that should be
+           // is = new URL("http://localhost:8080/static/db.properties").openStream();
+           // props.load(is);
             mysqlDS = new MysqlDataSource();
-            mysqlDS.setURL(props.getProperty("MYSQL_DB_URL"));
-            mysqlDS.setUser(props.getProperty("MYSQL_DB_USERNAME"));
-            mysqlDS.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));
-         } catch (Exception e) {
-           e.printStackTrace();
+
+            strMySQLHost = System.getenv("MYSQL_PORT_3306_TCP_ADDR");
+            if(strMySQLHost == null || strMySQLHost.isEmpty()) {
+            	strMySQLHost = "localhost";
+            }
+            strMySQLPort = System.getenv("MYSQL_PORT_3306_TCP_PORT");
+            if(strMySQLPort == null || strMySQLPort.isEmpty()) {
+            	strMySQLPort = "3306";
+            }
+            strMySQLDatabase = System.getenv("MYSQL_ENV_MYSQL_DATABASE");
+            if(strMySQLDatabase == null || strMySQLDatabase.isEmpty()) {
+            	strMySQLDatabase = "registry";
+            }
+            mysqlDS.setURL("jdbc:mysql://"+strMySQLHost+":"+strMySQLPort+"/"+strMySQLDatabase);
+            mysqlDS.setUser("admin");
+            mysqlDS.setPassword("admin");
+            
+            logger.log(Level.INFO, "Attempting to use jdbc:mysql://"+strMySQLHost+":"+strMySQLPort+"/"+strMySQLDatabase);
+           } catch (Exception e) {
+        	   
+        	   logger.log(Level.SEVERE, "Could not access database via connect string jdbc:mysql://"+strMySQLHost+":"+strMySQLPort+"/"+strMySQLDatabase,e);
+           
+           
             
             
         }

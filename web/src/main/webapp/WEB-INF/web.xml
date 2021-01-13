@@ -24,7 +24,5 @@
    <servlet-mapping> 
      <servlet-name>Jersey REST Service</servlet-name> 
      <url-pattern>/api/*</url-pattern> 
-  </servlet-mapping> 
-  
-  
+  </servlet-mapping>    
 </web-app>

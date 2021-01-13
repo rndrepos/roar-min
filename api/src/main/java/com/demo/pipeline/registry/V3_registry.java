@@ -1,5 +1,8 @@
 package com.demo.pipeline.registry;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -27,11 +30,12 @@ public class V3_registry {
 		JSONArray jsonArray = new JSONArray(); 
 		JSONObject jsonObject = new JSONObject();		
 		SchemaRegistry dao = new SchemaRegistry();
+		Logger logger = Logger.getLogger( V3_registry.class.getName() );		
 		
 		try {
 			
 			JSONObject agentData = new JSONObject(incomingData);
-			System.out.println("jsonData: " + agentData.toString());
+			
 			
 			int http_code = dao.insertIntoAgents(agentData.optString("AGENT_NAME"), 
 												 agentData.optString("AGENT_SPECIES"), 
@@ -48,10 +52,10 @@ public class V3_registry {
 				return Response.status(500).entity("Unable to process Item").build();
 			}
 			
-			System.out.println("returnString: " + returnString);
+			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not add agent.", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 		
@@ -72,6 +76,7 @@ public class V3_registry {
 		SchemaRegistry dao = new SchemaRegistry();
 		String aName;
 		String srvLast;
+		Logger logger = Logger.getLogger( V3_registry.class.getName() );	
 		
 		try {
 			
@@ -79,8 +84,7 @@ public class V3_registry {
 			aName = agentData.optString("AGENT_NAME");
 			srvLast = agentData.optString("SERVICE_LAST");
 			
-			System.out.println("jsonData: " + agentData.toString());
-			
+						
 			int http_code = dao.updateAgentLastServiceDate(aName, srvLast);
 			
 			if( http_code == 200 ) {
@@ -91,10 +95,9 @@ public class V3_registry {
 				return Response.status(500).entity("Unable to process Item").build();
 			}
 			
-			System.out.println("returnString: " + returnString);
-			
+					
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not update agent.", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 		
@@ -116,13 +119,12 @@ public class V3_registry {
 		JSONArray jsonArray = new JSONArray(); 
 		JSONObject jsonObject = new JSONObject();		
 		SchemaRegistry dao = new SchemaRegistry();
+		Logger logger = Logger.getLogger( V3_registry.class.getName() );	
 			
 		try {
 			
-			JSONObject agentData = new JSONObject(incomingData);
+								
 						
-			System.out.println("jsonData: " + agentData.toString());
-			
 			int http_code = dao.deleteFromAgents(name, species);
 			
 			if( http_code == 200 ) {
@@ -134,10 +136,10 @@ public class V3_registry {
 			
 			returnString = jsonArray.put(jsonObject).toString();
 			
-			System.out.println("returnString: " + returnString);
+			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not delete agent.", e);
 			return Response.status(500).entity("Server was not able to process the delete request").build();
 		}
 		

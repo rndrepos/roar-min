@@ -1,9 +1,5 @@
 package com.demo.pipeline.registry;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,10 +13,11 @@ import javax.ws.rs.QueryParam;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 
-import com.demo.dao.MyDataSource;
-import com.demo.util.ToJSON;
-
 import com.demo.dao.SchemaRegistry;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 @Path("v2/registry")
 public class V2_registry {
@@ -33,6 +30,7 @@ public class V2_registry {
 	{
 		String returnString = null;
 		JSONArray json = new JSONArray();
+		Logger logger = Logger.getLogger( V2_registry.class.getName() );		
 		
 		try {
 			
@@ -47,7 +45,7 @@ public class V2_registry {
 		
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "server was not able to process request to return agent species", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 			
@@ -63,6 +61,7 @@ public class V2_registry {
 	{
 		String returnString = null;
 		JSONArray json = new JSONArray();
+		Logger logger = Logger.getLogger( V2_registry.class.getName() );	
 		
 		try {
 			
@@ -74,7 +73,7 @@ public class V2_registry {
 		
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not get species list.", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 			
@@ -91,6 +90,7 @@ public class V2_registry {
 	{
 		String returnString = null;
 		JSONArray json = new JSONArray();
+		Logger logger = Logger.getLogger( V2_registry.class.getName() );	
 		
 		try {
 			
@@ -104,7 +104,7 @@ public class V2_registry {
 		
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not get species by name.", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 			
@@ -118,8 +118,9 @@ public class V2_registry {
 	public Response addAgent(String incomingData) throws Exception {
 		
 		String returnString = null;
-		//JSONArray jsonArray = new JSONArray(); //not needed
+		
 		SchemaRegistry dao = new SchemaRegistry();
+		Logger logger = Logger.getLogger( V2_registry.class.getName() );	
 		
 		try {
 			System.out.println("incomingData: " + incomingData);
@@ -142,14 +143,13 @@ public class V2_registry {
 													agentEntry.ADVERSARY_TECH);
 			
 			if( http_code == 200 ) {
-				//returnString = jsonArray.toString();
 				returnString = "Item inserted";
 			} else {
 				return Response.status(500).entity("Unable to process Item").build();
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.INFO, "Could not add agent.", e);
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 		

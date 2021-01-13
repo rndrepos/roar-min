@@ -1,13 +1,14 @@
 package com.demo.dao;
 
 import java.sql.*;
-
-import javax.ws.rs.core.Response;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.codehaus.jettison.json.JSONArray;
 import com.demo.util.ToJSON;
 
 public class SchemaRegistry extends MyDataSource {
+	Logger logger = Logger.getLogger( SchemaRegistry.class.getName() );		
 	
 	public int insertIntoAgents(String aName,
 								String aSpecies,
@@ -18,12 +19,7 @@ public class SchemaRegistry extends MyDataSource {
 			throws Exception {
 		
 		PreparedStatement query = null;
-		String myString = null;
-		String returnString = null;
 		Connection conn = null;
-		Response resp = null;
-		ToJSON converter = new ToJSON();
-		JSONArray json = new JSONArray();
 		
 		try {
 			
@@ -44,7 +40,7 @@ public class SchemaRegistry extends MyDataSource {
 			
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown inserting into agents", e);
 			return 500;
 		}
 		finally {
@@ -72,7 +68,7 @@ public class SchemaRegistry extends MyDataSource {
 			query.executeUpdate();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown deleting from agents", e);
 			return 500;
 		} finally {
 			if (conn != null)
@@ -88,10 +84,7 @@ public class SchemaRegistry extends MyDataSource {
 		
 	
 		PreparedStatement query = null;
-		String myString = null;
-		String returnString = null;
 		Connection conn = null;
-		Response resp = null;
 		ToJSON converter = new ToJSON();
 		JSONArray json = new JSONArray();
 		
@@ -111,7 +104,7 @@ public class SchemaRegistry extends MyDataSource {
 			
 		}
 		catch(SQLException sqlError) {
-			sqlError.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown deleting from agents", sqlError);
 			return json;
 		}
 		catch(Exception e) {
@@ -129,10 +122,7 @@ public class SchemaRegistry extends MyDataSource {
 		
 		
 		PreparedStatement query = null;
-		String myString = null;
-		String returnString = null;
 		Connection conn = null;
-		Response resp = null;
 		ToJSON converter = new ToJSON();
 		JSONArray json = new JSONArray();
 		
@@ -154,11 +144,11 @@ public class SchemaRegistry extends MyDataSource {
 			
 		}
 		catch(SQLException sqlError) {
-			sqlError.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown deleting from agents", sqlError);
 			return json;
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown deleting from agents", e);
 			return json;
 		}
 		finally {
@@ -178,7 +168,7 @@ public class SchemaRegistry extends MyDataSource {
 			// to-do data validation
 			
 			conn = MysqlConnection();
-			query = conn.prepareStatement("update Agents " +
+			query = conn.prepareStatement("update agents " +
 										  "set SRVLAST = ? " +
 										  "where NAME = ? ");
 
@@ -187,7 +177,7 @@ public class SchemaRegistry extends MyDataSource {
 			query.executeUpdate();
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "an exception was thrown deleting from agents", e);
 			return 500;
 		}
 		finally {
