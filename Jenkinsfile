@@ -47,22 +47,22 @@ pipeline {
             steps {
                 git branch: 'main', url: 'https://github.com/brentlaster/roar-min-deploy'
                 sh "git config --global user.email 'argocd@ci.com' && git config --global user.name 'argocd_user'"
-                dir ("roar-min-deploy") {
+              //  dir ("roar-min-deploy") {
                     sh "git checkout main"
                     sh "cd ./overlays/stage/db && kustomize edit set image localhost:5000/roar-db:${STAGE_VERSION}"
                     sh "cd ./overlays/stage/web && kustomize edit set image localhost:5000/roar-web:${STAGE_VERSION}"
                     sh "git commit -am 'Publish new staging release' && git push || echo 'no change'"
-                }
+              //  }
             }
         }
         stage('Deploy RC') {
             steps {
-                dir ("roar-min-deploy") {
+               // dir ("roar-min-deploy") {
                     sh "git checkout main"
                     sh "cd ./overlays/prod/db && kustomize edit set image localhost:5000/roar-db:${RC_VERSION}"
                     sh "cd ./overlays/prod/web && kustomize edit set image localhost:5000/roar-web:${RC_VERSION}"
                     sh "git commit -am 'Publish new release candidate' && git push || echo 'no change'"
-                }
+               // }
             }
         }
     }
