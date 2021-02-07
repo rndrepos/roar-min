@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Source') {
             steps {
-               wsCleanup()
+               cleanWs()
                checkout scm
                // sh "git clone -b main git@localhost:/git/repos/roar-min"
             }
