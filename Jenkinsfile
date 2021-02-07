@@ -16,10 +16,10 @@ pipeline {
                 gradle 'gradle5'
             }
             steps {
-                dir("roar-min") {
+              //  dir("roar-min") {
                     sh 'gradle -PSTAGE_VERSION=$STAGE_VERSION clean compileJava assemble'
                     stash includes: '**/web*.war', name: 'roar'
-                }
+              //  }
             }
         }
         stage('Package-Test') {
