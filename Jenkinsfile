@@ -49,7 +49,7 @@ pipeline {
                 sh "git checkout main"
                 sh "cd ./overlays/stage/db && kustomize edit set image localhost:5000/roar-db:${STAGE_VERSION}"
                 sh "cd ./overlays/stage/web && kustomize edit set image localhost:5000/roar-web:${STAGE_VERSION}"
-                sh "git commit -am 'Publish new staging release' && git push || echo 'no change'"
+                sh "git commit -am 'Publish new staging release' && git push origin main:main || echo 'no change'"
             }
         }
         stage('Deploy RC') {
@@ -57,7 +57,7 @@ pipeline {
                 sh "git checkout main"
                 sh "cd ./overlays/prod/db && kustomize edit set image localhost:5000/roar-db:${RC_VERSION}"
                 sh "cd ./overlays/prod/web && kustomize edit set image localhost:5000/roar-web:${RC_VERSION}"
-                sh "git commit -am 'Publish new release candidate' && git push || echo 'no change'"
+                sh "git commit -am 'Publish new release candidate' && git push origin main:main || echo 'no change'"
             }
         }
     }
