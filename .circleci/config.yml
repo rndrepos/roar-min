@@ -24,8 +24,9 @@ jobs:
       - restore_cache:
           keys:
           - web-war-{{ .Branch }}
-      - run: git clone -b test https://github.com/brentlaster/roar-min-docker
-      - run: |
+      - run: | 
+          git clone -b test https://github.com/brentlaster/roar-min-docker
+          cd roar-min-docker
           STAGE_VERSION=0.0.$CIRCLE_BUILD_NUM
           docker build -f Dockerfile_roar_db_image -t localhost:5000/roar-db:$STAGE_VERSION .
           docker build -f Dockerfile_roar_web_image --build-arg warFile=web/build/libs/web-$STAGE_VERSION-$CIRCLE_BUILD_NUM.war -t localhost:5000/roar-web:$STAGE_VERSION .
