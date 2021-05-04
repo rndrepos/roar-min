@@ -6,8 +6,7 @@ jobs:
     steps:
       - checkout           
   compile:
-    environment:
-      STAGE_VERSION: "0.0.$CIRCLE_BUILD_NUM"
+    STAGE_VERSION=0.0.$CIRCLE_BUILD_NUM
     docker:  
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run      
     steps: # a collection of executable commands
@@ -18,8 +17,7 @@ jobs:
             - web/build/libs/web-$STAGE_VERSION.war
           key: web-war-{{ .Branch }}-$STAGE_VERSION
   package-test:
-    environment:
-      STAGE_VERSION: "0.0.$CIRCLE_BUILD_NUM"
+    STAGE_VERSION=0.0.$CIRCLE_BUILD_NUM
     docker:
       - image: 'cimg/base:2021.05'
     steps:
