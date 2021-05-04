@@ -25,7 +25,7 @@ jobs:
     steps:
       - restore_cache:
           keys:
-          - web-war-{{ .Branch }}-{{ $STAGE_VERSION }}
+          - web-war-{{ .Branch }}-$STAGE_VERSION
       - setup_remote_docker:
           version: 19.03.13
       - run: | 
