@@ -15,7 +15,7 @@ jobs:
           command: gradle -PSTAGE_VERSION=$STAGE_VERSION clean compileJava assemble
       - save_cache:
           paths:
-            - */web*.war
+            - web/build/libs/web-${STAGE_VERSION}.war
           key: web-war-{{ .Branch }}
   package-test:
     environment:
