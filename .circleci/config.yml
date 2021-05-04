@@ -24,6 +24,9 @@ jobs:
       - restore_cache:
           keys:
           - web-war-{{ .Branch }}
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
       - run: | 
           git clone -b test https://github.com/brentlaster/roar-min-docker
           cd roar-min-docker
