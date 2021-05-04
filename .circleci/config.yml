@@ -18,6 +18,8 @@ jobs:
             - web/build/libs/web-$STAGE_VERSION.war
           key: web-war-{{ .Branch }}-{{ $STAGE_VERSION }}
   package-test:
+    environment:
+      STAGE_VERSION: "0.0.$CIRCLE_BUILD_NUM"
     docker:
       - image: 'cimg/base:2021.05'
     steps:
