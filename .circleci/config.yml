@@ -1,3 +1,5 @@
+orbs:
+  gradle: circleci/gradle@2.2.0
 version: 2.1
 jobs:
   source:
@@ -10,9 +12,10 @@ jobs:
       STAGE_VERSION: "0.0.${CIRCLE_BUILD_NUM}"
     docker:
       - image: 'cimg/base:2021.05'
+    
     steps:
-      - run:
-          command: gradle -PSTAGE_VERSION=$STAGE_VERSION clean compileJava assemble
+      - gradle/run:
+          command: -PSTAGE_VERSION=$STAGE_VERSION clean compileJava assemble
       - save_cache:
           paths:
             - web/build/libs/web-${STAGE_VERSION}.war
