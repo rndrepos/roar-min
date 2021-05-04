@@ -1,0 +1,45 @@
+version: 2.1
+jobs:
+  source:
+    docker:
+      - image: 'cimg/base:2021.05'
+    steps:
+      - checkout           
+  compile:
+    environment:
+      STAGE_VERSION: "0.0.${CIRCLE_BUILD_NUM}"
+    docker:
+      - image: 'cimg/base:2021.05'
+    steps:
+      - run:
+          command: gradle -PSTAGE_VERSION=$STAGE_VERSION clean compileJava assemble
+      - save_cache:
+          paths:
+            - **/web*.war
+          key: web-war-{{ .Branch }}
+  package-test:
+    environment:
+      STAGE_VERSION: "0.0.${CIRCLE_BUILD_NUM}"
+    docker:
+      - image: 'cimg/base:2021.05'
+    steps:
+      - restore_cache:
+          keys:
+          - web-war-{{ .Branch }}
+      - run: git clone -b test https://github.com/brentlaster/roar-min-docker
+      - run: docker build -f Dockerfile_roar_db_image -t localhost:5000/roar-db:${STAGE_VERSION} .
+      - run: docker build -f Dockerfile_roar_web_image --build-arg warFile=web/build/libs/web-${STAGE_VERSION}*.war -t localhost:5000/roar-web:${STAGE_VERSION} . "
+      - run: docker push localhost:5000/roar-db:${STAGE_VERSION}
+      - run: docker push localhost:5000/roar-web:${STAGE_VERSION}
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - source
+      - compile:
+          requires:
+            - source
+      - package-test:
+          requires:
+            - compile
+     
