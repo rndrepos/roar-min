@@ -18,7 +18,7 @@ jobs:
       - save_cache:
           paths:
             - web/build/libs/web-${STAGE_VERSION}.war
-          key: web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION }}
+          key: web-war-{{ .Branch }}-{{ .environment.STAGE_VERSION }}
   package-test:
     docker:
       - image: 'cimg/base:2021.05'
