@@ -2,7 +2,7 @@ version: 2.1
 parameters:
    image-tag: 
      type: string
-     default: $CIRCLE_BUILD_NUM
+     default: 'echo $CIRCLE_BUILD_NUM`
 jobs:
   source:
     docker:
