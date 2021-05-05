@@ -1,17 +1,12 @@
 version: 2.1
-parameters:
-   image-tag: 
-     type: string
-     default: `echo $CIRCLE_BUILD_NUM`
 jobs:
   source:
     docker:
       - image: 'cimg/base:2021.05'
     steps:
-      - checkout           
-  compile:
-    environment:
-      STAGE_VERSION: << pipeline.parameters.image-tag >>
+      - checkout 
+      - run: echo "export STAGE_VERSION=${CIRCLE_BUILD_NUM}" >> $BASH_ENV   
+  compile:  
     docker:  
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run      
     steps: # a collection of executable commands
@@ -23,14 +18,12 @@ jobs:
             - web/build/libs/web-${STAGE_VERSION}.war
           key: web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION }}
   package-test:
-    environment:
-      STAGE_VERSION: $CIRCLE_BUILD_NUM
     docker:
       - image: 'cimg/base:2021.05'
     steps:
       - restore_cache:
           keys:
-          - web-war-{{ .Branch }}-{{ .Environment.CIRCLE_BUILD_NUM }}
+          - web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION }}
       - setup_remote_docker:
           version: 19.03.13
       - run: | 
