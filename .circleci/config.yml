@@ -11,11 +11,11 @@ jobs:
     steps: # a collection of executable commands
       - run: echo "export STAGE_VERSION=${CIRCLE_WORKFLOW_ID}" >> $BASH_ENV
       - checkout # check out source code to working directory
-      - run: gradle --info -PSTAGE_VERSION=${STAGE_VERSION} clean compileJava assemble
+      - run: gradle --info -PSTAGE_VERSION='${STAGE_VERSION}' clean compileJava assemble
       - run: echo ${STAGE_VERSION}
       - save_cache:
           paths:
-            - web/build/libs/web-${STAGE_VERSION}.war
+            - web/build/libs/web-'${STAGE_VERSION}'.war
           key: web-war-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
   package-test:
     docker:
