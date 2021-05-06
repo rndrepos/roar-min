@@ -5,35 +5,35 @@ jobs:
       - image: 'cimg/base:2021.05'
     steps:
       - checkout 
-      - run: echo "export STAGE_VERSION2='${CIRCLE_BUILD_NUM}'" >> $BASH_ENV
+      - run: echo "export STAGE_VERSION3=${CIRCLE_BUILD_NUM}" >> $BASH_ENV
       - run: echo $BASH_ENV
   compile:  
     docker:  
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run      
     steps: # a collection of executable commands
       - checkout # check out source code to working directory
-      - run: gradle -PSTAGE_VERSION='${STAGE_VERSION2}' clean compileJava assemble
+      - run: gradle -PSTAGE_VERSION=${STAGE_VERSION3} clean compileJava assemble
       - run: echo ${STAGE_VERSION2}
       - save_cache:
           paths:
-            - web/build/libs/web-${STAGE_VERSION2}.war
-          key: web-war-{{ .Branch }}-$'{STAGE_VERSION2}'
+            - web/build/libs/web-${STAGE_VERSION3}.war
+          key: web-war-{{ .Branch }}-${STAGE_VERSION3}
   package-test:
     docker:
       - image: 'cimg/base:2021.05'
     steps:
       - restore_cache:
           keys:
-          - web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION }}
+          - web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION3 }}
       - setup_remote_docker:
           version: 19.03.13
       - run: | 
           git clone -b test https://github.com/brentlaster/roar-min-docker
           cd roar-min-docker
-          docker build -f Dockerfile_roar_db_image -t 'localhost:5000/roar-db:${STAGE_VERSION2}' .
-          docker build -f Dockerfile_roar_web_image --build-arg warFile='web/build/libs/web-${STAGE_VERSION2}.war' -t 'localhost:5000/roar-web:${STAGE_VERSION2}' .
-          docker push localhost:5000/roar-db:$STAGE_VERSION
-          docker push localhost:5000/roar-web:$STAGE_VERSION
+          docker build -f Dockerfile_roar_db_image -t localhost:5000/roar-db:${STAGE_VERSION3} .
+          docker build -f Dockerfile_roar_web_image --build-arg warFile=web/build/libs/web-${STAGE_VERSION3}.war -t localhost:5000/roar-web:${STAGE_VERSION3} .
+          docker push localhost:5000/roar-db:$STAGE_VERSION3
+          docker push localhost:5000/roar-web:$STAGE_VERSION3
 workflows:
   version: 2
   build-and-test:
