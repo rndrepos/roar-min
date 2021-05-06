@@ -5,19 +5,20 @@ jobs:
       - image: 'cimg/base:2021.05'
     steps:
       - checkout 
-      - run: echo 'export STAGE_VERSION="23"' >> $BASH_ENV   
+      - run: echo "export STAGE_VERSION2='${CIRCLE_BUILD_NUM}'" >> "$BASH_ENV"
   compile:  
     docker:  
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run      
     steps: # a collection of executable commands
       - checkout # check out source code to working directory
-      - run: gradle -PSTAGE_VERSION=${STAGE_VERSION} clean compileJava assemble
-      - run: echo 'export STAGE_VERSION="23"' >> $BASH_ENV  
-      - run: echo $STAGE_VERSION
+      - run: gradle -PSTAGE_VERSION='${STAGE_VERSION2}' clean compileJava assemble
+      - run: echo '${STAGE_VERSION2}'
       - save_cache:
+          stage_version2: '${STAGE_VERSION2}'
+          echo 'stage version2 = << stage_version2 >>'
           paths:
-            - web/build/libs/web-$STAGE_VERSION.war
-          key: web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION }}
+            - web/build/libs/web-$STAGE_VERSION2.war
+          key: web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION2 }}
   package-test:
     docker:
       - image: 'cimg/base:2021.05'
@@ -30,8 +31,8 @@ jobs:
       - run: | 
           git clone -b test https://github.com/brentlaster/roar-min-docker
           cd roar-min-docker
-          docker build -f Dockerfile_roar_db_image -t localhost:5000/roar-db:$STAGE_VERSION .
-          docker build -f Dockerfile_roar_web_image --build-arg warFile=web/build/libs/web-$CIRCLE_BUILD_NUM.war -t localhost:5000/roar-web:$STAGE_VERSION .
+          docker build -f Dockerfile_roar_db_image -t 'localhost:5000/roar-db:${STAGE_VERSION2}' .
+          docker build -f Dockerfile_roar_web_image --build-arg warFile='web/build/libs/web-${STAGE_VERSION2}.war' -t 'localhost:5000/roar-web:${STAGE_VERSION2}' .
           docker push localhost:5000/roar-db:$STAGE_VERSION
           docker push localhost:5000/roar-web:$STAGE_VERSION
 workflows:
