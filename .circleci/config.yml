@@ -14,8 +14,6 @@ jobs:
       - run: gradle -PSTAGE_VERSION='${STAGE_VERSION2}' clean compileJava assemble
       - run: echo '${STAGE_VERSION2}'
       - save_cache:
-          stage_version2: '${STAGE_VERSION2}'
-          run: echo 'stage version2 = << stage_version2 >>'
           paths:
             - web/build/libs/web-${STAGE_VERSION2}.war
           key: web-war-{{ .Branch }}-{{ .Environment.STAGE_VERSION2 }}
